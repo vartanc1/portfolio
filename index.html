@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Vartan Chakryan</title>
+<meta name="description" content="Vartan Chakryan, software engineer working in C, C++, Python, and embedded systems.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #000000;
+    --surface: #0d0d0d;
+    --line: #262626;
+    --text: #e8e6e1;
+    --muted: #9a978f;
+    --amber: #ffb547;
+    --amber-dim: rgba(255, 181, 71, 0.12);
+    --display: "Sora", "Helvetica Neue", Arial, sans-serif;
+    --body: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+    --max: 1040px;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    color-scheme: dark;
+  }
+  /* The site is black by design in every theme */
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #000000; } }
+  :root[data-theme="dark"] { --bg: #000000; }
+
+  *, *::before, *::after { box-sizing: inherit; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; scroll-padding-top: calc(env(safe-area-inset-top, 0px) + 72px); }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--body);
+    font-size: 1.0625rem;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+  img { max-width: 100%; display: block; }
+  a { color: inherit; }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; border-radius: 2px; }
+
+  .skip { position: absolute; left: -9999px; }
+  .skip:focus { left: 1rem; top: 1rem; background: var(--amber); color: #000; padding: .5rem 1rem; z-index: 100; }
+
+  /* ---------- Top navigation row ---------- */
+  .topbar {
+    position: sticky;
+    top: env(safe-area-inset-top, 0px);
+    z-index: 50;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .topbar-inner {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+  }
+  .brand {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 1.05rem;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .nav { display: flex; gap: .25rem; overflow-x: auto; scrollbar-width: none; }
+  .nav::-webkit-scrollbar { display: none; }
+  .nav a {
+    text-decoration: none;
+    color: var(--muted);
+    font-size: .95rem;
+    padding: .4rem .8rem;
+    border-radius: 4px;
+    white-space: nowrap;
+    transition: color .2s, background .2s;
+  }
+  .nav a:hover { color: var(--text); }
+  .nav a.active { color: var(--amber); background: var(--amber-dim); }
+
+  /* ---------- Layout ---------- */
+  main { max-width: var(--max); margin: 0 auto; padding: 0 1.5rem; }
+  section { padding: 5.5rem 0 1rem; }
+  h2 {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 1.6rem;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  h2::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+
+  /* ---------- Hero ---------- */
+  .hero { padding: 6rem 0 0; }
+  #about { padding-top: 3.5rem; }
+  .hero h1 {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: clamp(2.75rem, 8vw, 5.5rem);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    font-weight: 500;
+  }
+  .hero .role {
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: clamp(1.2rem, 2.6vw, 1.6rem);
+    color: var(--amber);
+    margin-top: 1rem;
+  }
+  .hero p.lede { max-width: 38rem; color: var(--muted); margin-top: 1.25rem; }
+
+  /* ---------- About ---------- */
+  .about p { max-width: 42rem; color: var(--muted); margin-bottom: 1.1rem; }
+  .about strong { color: var(--text); font-weight: 500; }
+
+  /* ---------- Experience timeline ---------- */
+  .timeline { list-style: none; border-left: 1px solid var(--line); margin-left: .35rem; }
+  .timeline li { position: relative; padding: 0 0 2.5rem 2rem; }
+  .timeline li::before {
+    content: "";
+    position: absolute;
+    left: -5px; top: .55rem;
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 2px solid var(--amber);
+  }
+  .timeline .when { color: var(--muted); font-size: .9rem; }
+  .timeline h3 { font-family: var(--display); font-weight: 500; font-size: 1.2rem; margin: .15rem 0 .5rem; }
+  .timeline h3 span { color: var(--muted); font-weight: 500; }
+  .timeline ul { padding-left: 1.1rem; color: var(--muted); max-width: 44rem; }
+  .timeline ul li { padding: 0 0 .35rem; }
+  .timeline ul li::before { display: none; }
+
+  .tags { display: flex; flex-wrap: wrap; gap: .45rem; margin-top: .9rem; list-style: none; }
+  .tags li {
+    font-size: .8rem;
+    color: var(--amber);
+    background: var(--amber-dim);
+    padding: .25rem .65rem;
+    border-radius: 999px;
+  }
+  .timeline .tags { padding-left: 0; }
+  .timeline .tags li { padding: .25rem .65rem; }
+
+  .skills { display: flex; flex-direction: column; }
+  .skill-group {
+    display: grid;
+    grid-template-columns: 11rem 1fr;
+    gap: 1.5rem;
+    align-items: baseline;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .skill-group:first-child { padding-top: 0; }
+  .skill-group h3 { font-family: var(--display); font-weight: 500; font-size: 1rem; }
+  .skill-group .tags { margin-top: 0; }
+  .skill-group .tags li { font-size: .85rem; }
+  @media (max-width: 600px) {
+    .skill-group { grid-template-columns: 1fr; gap: .5rem; }
+  }
+
+  /* ---------- Projects with images ---------- */
+  .projects { display: grid; gap: 3.5rem; }
+  .project {
+    display: grid;
+    grid-template-columns: 1fr 1.15fr;
+    gap: 2rem;
+    align-items: center;
+  }
+  .project .shot { order: 2; }
+  .shot {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    overflow: hidden;
+    background: var(--surface);
+  }
+  .shot img { width: 100%; height: 100%; object-fit: cover; position: relative; z-index: 1; }
+  /* Placeholder shows until a real image loads */
+  .shot .placeholder {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .5rem;
+    color: var(--muted); font-size: .9rem; text-align: center; padding: 1rem;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 32px 32px;
+    background-position: center;
+  }
+  .shot .placeholder svg { width: 40px; height: 40px; stroke: var(--amber); }
+  .shot .placeholder code { color: var(--text); background: #000; padding: .1rem .4rem; border-radius: 3px; }
+  .project h3 { font-family: var(--display); font-weight: 600; font-size: 1.4rem; margin-bottom: .6rem; }
+  .project p { color: var(--muted); }
+  .status { font-family: var(--body); font-size: .75rem; font-weight: 500; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: .15rem .6rem; margin-left: .5rem; vertical-align: middle; white-space: nowrap; }
+  .timeline ul strong { color: var(--text); font-weight: 500; }
+
+  .photo-cap {
+    position: absolute; right: .6rem; bottom: .6rem; z-index: 2;
+    font-size: .75rem; color: #3a3a3a;
+    background: rgba(255,255,255,.85); padding: .15rem .55rem; border-radius: 4px;
+  }
+
+  /* ---------- Project photo carousel ---------- */
+  .carousel { outline: none; }
+  .carousel:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
+  .track { display: flex; height: 100%; transition: transform .45s ease; }
+  .slide { position: relative; flex: 0 0 100%; height: 100%; }
+  .carousel { aspect-ratio: 4 / 5; }
+  .slide img, .slide video { position: relative; z-index: 1; width: 100%; height: 100%; object-fit: cover; display: block; }
+  .slide .placeholder { gap: .5rem; }
+  .car-btn {
+    position: absolute; top: 50%; z-index: 3;
+    width: 42px; height: 42px; margin-top: -21px;
+    border-radius: 50%; border: 1px solid rgba(255,255,255,.18);
+    background: rgba(0,0,0,.6); color: var(--text);
+    font-size: 1.7rem; line-height: 1; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; padding-bottom: 3px;
+    transition: transform .2s ease, border-color .2s, color .2s;
+  }
+  .car-btn.prev { left: .75rem; }
+  .car-btn.next { right: .75rem; }
+  .car-btn:hover { border-color: var(--amber); color: var(--amber); }
+  .dots { position: absolute; bottom: .75rem; left: 0; right: 0; z-index: 3; display: flex; justify-content: center; gap: .5rem; }
+  .dots button { width: 9px; height: 9px; padding: 0; border-radius: 50%; border: 0; background: rgba(255,255,255,.35); cursor: pointer; transition: background .2s, transform .2s; }
+  .dots button.on { background: var(--amber); }
+  .project .eyebrow { color: var(--amber); font-size: .85rem; margin-bottom: .35rem; }
+  .project h4 { font-family: var(--display); font-weight: 500; font-size: 1rem; margin: 1rem 0 .3rem; }
+  .project .role-list { color: var(--muted); padding-left: 1.1rem; }
+  .project .role-list li { margin-bottom: .35rem; }
+  @media (prefers-reduced-motion: reduce) { .track { transition: none; } }
+
+  /* ---------- Contact / footer ---------- */
+  .contact p { color: var(--muted); max-width: 36rem; margin-bottom: 1.5rem; }
+  .button {
+    display: inline-block;
+    border: 1px solid var(--amber);
+    color: var(--amber);
+    text-decoration: none;
+    padding: .8rem 1.4rem;
+    border-radius: 4px;
+    transition: background .2s;
+  }
+  .button:hover { background: var(--amber-dim); }
+  footer { max-width: var(--max); margin: 5rem auto 0; padding: 2.5rem 1.5rem 3rem; color: var(--muted); font-size: .85rem; border-top: 1px solid var(--line); text-align: center; }
+  .socials { display: flex; justify-content: center; gap: 1.25rem; flex-wrap: wrap; }
+  .socials a {
+    display: flex; flex-direction: column; align-items: center; gap: .4rem;
+    text-decoration: none; color: var(--muted); font-size: .8rem;
+    transition: color .2s;
+  }
+  .socials svg {
+    width: 48px; height: 48px; padding: 12px;
+    border: 1px solid var(--line); border-radius: 50%;
+    transition: border-color .2s;
+  }
+  .socials a:hover { color: var(--amber); }
+  .socials a:hover svg { border-color: var(--amber); }
+
+  /* ---------- Hover pop for everything clickable ---------- */
+  .brand, .nav a, .button, .socials a {
+    transition: transform .2s ease, box-shadow .2s ease, color .2s, background .2s, border-color .2s;
+  }
+  .brand { display: inline-block; }
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .brand:hover { transform: scale(1.05); }
+    .nav a:hover { transform: translateY(-2px); }
+    .button:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(255, 181, 71, 0.18); }
+    .socials a:hover { transform: translateY(-4px); }
+    .car-btn:hover { transform: scale(1.12); }
+    .dots button:hover { transform: scale(1.3); }
+  }
+
+  /* ---------- One page-load moment ---------- */
+  @media (prefers-reduced-motion: no-preference) {
+    .hero > * { opacity: 0; transform: translateY(12px); animation: rise .7s ease-out forwards; }
+    .hero > *:nth-child(2) { animation-delay: .12s; }
+    .hero > *:nth-child(3) { animation-delay: .24s; }
+    .hero > *:nth-child(4) { animation-delay: .36s; }
+    .hero > *:nth-child(5) { animation-delay: .48s; }
+    @keyframes rise { to { opacity: 1; transform: none; } }
+  }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+  /* ---------- Mobile ---------- */
+  @media (max-width: 720px) {
+    .topbar-inner { height: auto; flex-direction: column; align-items: flex-start; gap: .25rem; padding: .75rem 1rem .5rem; }
+    .nav { width: 100%; margin-left: -.8rem; }
+    html { scroll-padding-top: calc(env(safe-area-inset-top, 0px) + 100px); }
+    main { padding: 0 1rem; }
+    .hero { padding-top: 4rem; }
+    .project { grid-template-columns: 1fr; gap: 1.25rem; }
+    .project .shot { order: 0; }
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+
+<!-- Top navigation row -->
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="#top">Vartan Chakryan</a>
+    <nav class="nav" aria-label="Sections">
+      <a href="#about">About</a>
+      <a href="#education">Education</a>
+      <a href="#experience">Experience</a>
+      <a href="#projects">Projects</a>
+      <a href="#skills">Skills</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main id="content">
+  <!-- Hero -->
+  <div class="hero" id="top">
+    <h1>Vartan Chakryan</h1>
+    <p class="role">Software Engineer</p>
+  </div>
+
+  <!-- About -->
+  <section id="about" class="about">
+    <h2>About</h2>
+    <p>I earned my <strong>B.S. in Computer Engineering at CSUN</strong> and I'm now working toward an <strong>M.S. in Computer Science at Georgia Tech</strong>, specializing in Computing Systems. I like working where software meets hardware: bare-metal drivers for microcontrollers, flight hardware, and the systems code underneath everything else.</p>
+    <p>Outside of engineering, I read history, biographies, and philosophy.</p>
+  </section>
+
+  <!-- Education -->
+  <section id="education">
+    <h2>Education</h2>
+    <ol class="timeline">
+      <li>
+        <p class="when">In progress</p>
+        <h3>M.S. Computer Science, Computing Systems <span>at Georgia Institute of Technology</span></h3>
+        <ul>
+          <li><strong>Computer Networking:</strong> network programming in Python.</li>
+          <li><strong>Database Implementation:</strong> building a database from scratch in C++.</li>
+        </ul>
+      </li>
+      <li>
+        <p class="when">2021 – 2025</p>
+        <h3>B.S. Computer Engineering <span>at California State University, Northridge</span></h3>
+        <ul>
+          <li><strong>Embedded Systems:</strong> embedded C with static allocation, writing bare-metal device drivers for GPIO, PWM, UART, and I2C on microcontrollers.</li>
+          <li><strong>Hardware &amp; systems:</strong> Digital Logic, Circuits &amp; Electronics, Computer Architecture, Operating Systems.</li>
+          <li><strong>Programming:</strong> Intro to Programming and Data Structures &amp; Algorithms in Java.</li>
+          <li><strong>Math:</strong> Calculus, Differential Equations, Linear Algebra.</li>
+        </ul>
+      </li>
+    </ol>
+  </section>
+
+  <!-- Experience -->
+  <section id="experience">
+    <h2>Experience</h2>
+    <ol class="timeline">
+      <li>
+        <p class="when">Add dates</p>
+        <h3>Avionics Hardware Lead <span>at CSUN SAE Aero Design Team</span></h3>
+        <ul>
+          <li>Competed in the Advanced Class of SAE Aero Design, an international competition hosted by Lockheed Martin. Out of 25 teams, ours was one of only 6 whose aircraft flew at competition.</li>
+          <li>Part of a 25-person team of mechanical, electrical, and computer science students that built an autonomous drone from scratch, with a balsa wood and 1/8" plywood airframe.</li>
+          <li>Led a group of 3 engineers designing the payload pickup and drop-off system, built from light birch plywood and 3D-printed parts, and worked with the manufacturing team through testing.</li>
+          <li>Integrated off-the-shelf flight controllers, motors, and wiring running open-source flight control software.</li>
+          <li>Programmed a Raspberry Pi 5 in Python to communicate with the flight controller over the MAVLink protocol.</li>
+        </ul>
+        <ul class="tags"><li>Python</li><li>MAVLink</li><li>Raspberry Pi 5</li><li>Flight controllers</li><li>Git</li><li>3D printing</li></ul>
+      </li>
+    </ol>
+  </section>
+
+  <!-- Projects with images -->
+  <section id="projects">
+    <h2>Projects</h2>
+    <div class="projects">
+
+      <!-- To add a photo: put the image in an "images" folder next to this file,
+           using the filename shown in the placeholder. -->
+      <article class="project" id="aircraft">
+        <!-- Slide 1: images/uav-1.jpg  |  Slide 2: images/uav2-vid.mov (or .mp4) -->
+        <div class="shot carousel" tabindex="0" aria-roledescription="carousel" aria-label="Aircraft photos">
+          <div class="track">
+            <div class="slide">
+              <span class="placeholder"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M21 17l-5-5-8 7"/></svg><span>Add <code>images/uav-1.gif</code></span></span>
+              <img src="images/uav-1.jpg" alt="The CSUN autonomous aircraft, number 221, on the runway">
+            </div>
+            <div class="slide">
+              <span class="placeholder"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M21 17l-5-5-8 7"/></svg><span>Add <code>images/uav2-vid.mov</code></span></span>
+              <video autoplay muted loop playsinline preload="auto" aria-label="Video of the CSUN autonomous aircraft">
+                <source src="images/uav2-vid.mp4" type="video/mp4">
+                <source src="images/uav2-vid.mov" type="video/quicktime">
+                <source src="images/uav2-vid.mov" onerror="this.parentElement.remove()">
+              </video>
+            </div>
+          </div>
+          <button class="car-btn prev" type="button" aria-label="Previous photo">&#8249;</button>
+          <button class="car-btn next" type="button" aria-label="Next photo">&#8250;</button>
+          <div class="dots"><button type="button" aria-label="Photo 1" class="on"></button><button type="button" aria-label="Photo 2"></button></div>
+        </div>
+        <div>
+          <p class="eyebrow">SAE Aero Design, Advanced Class</p>
+          <h3>Autonomous payload-drop aircraft</h3>
+          <p>Built from scratch by a 25-person team for an international competition hosted by Lockheed Martin. We were one of 6 teams out of 25 to fly.</p>
+          <h4>Mission</h4>
+          <p>Take off autonomously, drop a payload in the drop zone, then return and land.</p>
+          <h4>My role</h4>
+          <ul class="role-list">
+            <li>Led 3 engineers on the payload pickup and drop-off system, using birch plywood and 3D printing.</li>
+            <li>Wrote Python on a Raspberry Pi 5 to talk to the flight controller over MAVLink.</li>
+            <li>Integrated flight controllers, motors, and open-source flight software.</li>
+          </ul>
+          <ul class="tags"><li>Flight controllers</li><li>MAVLink</li><li>Raspberry Pi 5</li><li>Python</li><li>3D printing</li></ul>
+        </div>
+      </article>
+
+      <article class="project">
+        <figure class="shot" style="aspect-ratio: 1200 / 627; background: #fff;">
+          <div class="placeholder">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M21 17l-5-5-8 7"/></svg>
+            Add <code>images/robot.jpg</code>
+          </div>
+          <img src="images/robot.jpg" alt="Two-wheel robot with an ARM Cortex-M4 LaunchPad, IR distance sensors, and bump switches">
+          <figcaption class="photo-cap">TI-RSLK kit</figcaption>
+        </figure>
+        <div>
+          <p class="eyebrow">Jonathan Valvano's Embedded Systems course, UT Austin</p>
+          <h3>Bare-metal two-wheel robot</h3>
+          <p>A real-time robot written in bare-metal C on an ARM Cortex-M4 with no hardware abstraction libraries. GPIO, timers, PWM, and UART are configured directly at the register level, with an ultrasonic distance-sensing and motor-control loop and live UART telemetry for debugging.</p>
+          <ul class="tags"><li>C</li><li>ARM Cortex-M4</li><li>PWM</li><li>UART</li></ul>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- Skills -->
+  <section id="skills">
+    <h2>Skills</h2>
+    <div class="skills">
+      <div class="skill-group">
+        <h3>Languages</h3>
+        <ul class="tags"><li>C</li><li>C++</li><li>Python</li><li>Java</li></ul>
+      </div>
+      <div class="skill-group">
+        <h3>Embedded systems</h3>
+        <ul class="tags"><li>Embedded C</li><li>Bare-metal device drivers</li><li>Register-level programming</li><li>ARM Cortex-M</li><li>Raspberry Pi 5</li><li>Flight controllers</li></ul>
+      </div>
+      <div class="skill-group">
+        <h3>Protocols</h3>
+        <ul class="tags"><li>GPIO</li><li>PWM</li><li>UART</li><li>I2C</li></ul>
+      </div>
+      <div class="skill-group">
+        <h3>Networking</h3>
+        <ul class="tags"><li>TCP/IP</li><li>UDP</li><li>Sockets</li><li>HTTP</li><li>REST APIs (GET/POST)</li></ul>
+      </div>
+      <div class="skill-group">
+        <h3>Operating systems</h3>
+        <ul class="tags"><li>Processes &amp; threads</li><li>Concurrency</li><li>Scheduling</li><li>Memory management</li><li>System calls</li></ul>
+      </div>
+      <div class="skill-group">
+        <h3>Tools</h3>
+        <ul class="tags"><li>Git</li><li>GitHub</li><li>Linux</li><li>Docker</li><li>CMake</li><li>Wireshark</li><li>VS Code</li><li>PostgreSQL</li></ul>
+      </div>
+      <div class="skill-group">
+        <h3>Lab &amp; hardware</h3>
+        <ul class="tags"><li>Oscilloscope</li><li>Function generator</li><li>Breadboarding</li><li>Soldering</li><li>3D printing</li></ul>
+      </div>
+      <div class="skill-group">
+        <h3>Python libraries</h3>
+        <ul class="tags"><li>NumPy</li><li>pandas</li><li>MAVLink</li></ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact" class="contact">
+    <h2>Contact</h2>
+    <p>I'm looking for new graduate roles in embedded and flight software. If you're building hardware that flies or reshoring manufacturing, I'd like to hear about it.</p>
+    <a class="button" href="mailto:vartanchakryan@gmail.com">Email me</a>
+  </section>
+</main>
+
+<footer>
+  <nav class="socials" aria-label="Contact links">
+    <a href="https://linkedin.com/in/vartan-c1" target="_blank" rel="noopener" aria-label="LinkedIn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M3 13h18"/></svg>
+      <span>LinkedIn</span>
+    </a>
+    <a href="mailto:vartanchakryan@gmail.com" aria-label="Email">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+      <span>Email</span>
+    </a>
+    <a href="resume.pdf" target="_blank" rel="noopener" aria-label="Résumé">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></svg>
+      <span>Résumé</span>
+    </a>
+  </nav>
+</footer>
+
+
+<script>
+  // Highlight the nav link for the section on screen
+  const links = document.querySelectorAll('.nav a');
+  const sections = [...links].map(a => document.querySelector(a.getAttribute('href')));
+  const setActive = () => {
+    let current = null;
+    sections.forEach((s, i) => {
+      if (s && s.getBoundingClientRect().top < window.innerHeight * 0.4) current = i;
+    });
+    links.forEach((a, i) => a.classList.toggle('active', i === current));
+  };
+  window.addEventListener('scroll', setActive, { passive: true });
+  setActive();
+
+  // Aircraft photo carousel
+  document.querySelectorAll('.carousel').forEach(car => {
+    const track = car.querySelector('.track');
+    const dots = [...car.querySelectorAll('.dots button')];
+    const n = track.children.length;
+    let i = 0;
+    const go = k => {
+      i = (k + n) % n;
+      track.style.transform = `translateX(-${i * 100}%)`;
+      dots.forEach((d, j) => d.classList.toggle('on', j === i));
+      const v = track.children[i].querySelector('video');
+      if (v) { v.muted = true; v.play().catch(() => {}); }
+    };
+    car.querySelector('.prev').addEventListener('click', () => go(i - 1));
+    car.querySelector('.next').addEventListener('click', () => go(i + 1));
+    dots.forEach((d, j) => d.addEventListener('click', () => go(j)));
+    car.addEventListener('keydown', e => {
+      if (e.key === 'ArrowLeft') go(i - 1);
+      if (e.key === 'ArrowRight') go(i + 1);
+    });
+    let x0 = null;
+    car.addEventListener('touchstart', e => { x0 = e.touches[0].clientX; }, { passive: true });
+    car.addEventListener('touchend', e => {
+      if (x0 === null) return;
+      const dx = e.changedTouches[0].clientX - x0;
+      if (Math.abs(dx) > 40) go(dx < 0 ? i + 1 : i - 1);
+      x0 = null;
+    });
+  });
+</script>
+</body>
+</html>
